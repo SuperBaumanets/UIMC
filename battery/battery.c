@@ -116,11 +116,11 @@ void greenbattery(t_batt batt)
 	
 	heightCharge = 12;
 	
-	colorCharge = set_Color16(0, 49, 5);
-	dcolorCharge = set_Color16(0, 40, 5);
+	colorCharge = ST7735S_SetColor16(0, 49, 5);
+	dcolorCharge = ST7735S_SetColor16(0, 40, 5);
 	
-	plot_FillRectangle(x0 + 1, y0 + 1, widthCharge, heightCharge - 2, colorCharge);
-	plot_FillRectangle(x0 + 1, y0 + heightCharge - 1, widthCharge, 2, dcolorCharge);
+	ST7735S_DrawFillRectangle(x0 + 1, y0 + 1, widthCharge, heightCharge - 2, colorCharge);
+	ST7735S_DrawFillRectangle(x0 + 1, y0 + heightCharge - 1, widthCharge, 2, dcolorCharge);
 	
 	
 	//Отрисовка корпуса батареи
@@ -132,7 +132,7 @@ void greenbattery(t_batt batt)
 	heightFrame = heightCharge + 2;
 	colorFrame = 0xFFFF;
 	
-	plot_Rectangle(x0, y0, widthFrame, heightFrame, colorFrame);
+	ST7735S_DrawRectangle(x0, y0, widthFrame, heightFrame, colorFrame);
 	
 	
 	//Отрисовка контанкта батареи
@@ -142,7 +142,7 @@ void greenbattery(t_batt batt)
 	widthContact = 2;
 	heightContact = heightCharge - 4;
 	
-	plot_FillRectangle(x0 + widthFrame, y0 + 3, widthContact, heightContact, colorFrame);
+	ST7735S_DrawFillRectangle(x0 + widthFrame, y0 + 3, widthContact, heightContact, colorFrame);
 }
 //----------------------------------------------------------------------------
 
@@ -174,7 +174,7 @@ void gradientbattery(t_batt batt)
 	
 	heightCharge = 12;
 	
-	colorChargeGreen = set_Color16(0, 49, 5);
+	colorChargeGreen = ST7735S_SetColor16(0, 49, 5);
 	colorChargeYellow = 0xFFE0;
 	colorChargeRed = 0xF800;
 	colorBckGrnd = scr1.color_bckgrnd;
@@ -182,11 +182,11 @@ void gradientbattery(t_batt batt)
 	
 	for(uint8_t i = 0; i < 12; i++)
 	{
-		plot_Line2Color(x0 + 1, y0 + 1 + i, (x0 + 1) + widthMaxCharge/2 - 1, y0 + 1 + i, colorChargeRed, colorChargeYellow);
-		plot_Line2Color((x0 + 1) + widthMaxCharge/2, y0 + 1 + i, x0 + widthMaxCharge, y0 + 1 + i, colorChargeYellow, colorChargeGreen);
+		ST7735S_DrawLine2Color(x0 + 1, y0 + 1 + i, (x0 + 1) + widthMaxCharge/2 - 1, y0 + 1 + i, colorChargeRed, colorChargeYellow);
+		ST7735S_DrawLine2Color((x0 + 1) + widthMaxCharge/2, y0 + 1 + i, x0 + widthMaxCharge, y0 + 1 + i, colorChargeYellow, colorChargeGreen);
 	}
 	
-	plot_FillRectangle(x0 + widthCharge, y0 + 1, widthMaxCharge - widthCharge, heightCharge, colorBckGrnd);
+	ST7735S_DrawFillRectangle(x0 + widthCharge, y0 + 1, widthMaxCharge - widthCharge, heightCharge, colorBckGrnd);
 	
 	
 	//Отрисовка корпуса батареи
@@ -198,7 +198,7 @@ void gradientbattery(t_batt batt)
 	heightFrame = heightCharge + 2;
 	colorFrame = 0xFFFF;
 	
-	plot_Rectangle(x0, y0, widthFrame, heightFrame, colorFrame);
+	ST7735S_DrawRectangle(x0, y0, widthFrame, heightFrame, colorFrame);
 	
 	//Отрисовка контанкта батареи
 	uint16_t widthContact;   	//Длина  контакта батареи 
@@ -207,7 +207,7 @@ void gradientbattery(t_batt batt)
 	widthContact = 2;
 	heightContact = heightCharge - 4;
 	
-	plot_FillRectangle(x0 + widthFrame, y0 + 3, widthContact, heightContact, colorFrame);
+	ST7735S_DrawFillRectangle(x0 + widthFrame, y0 + 3, widthContact, heightContact, colorFrame);
 }
 //----------------------------------------------------------------------------
 
@@ -238,31 +238,31 @@ void fsgrnyllwrdbattery(t_batt batt)
 	heightCharge = 12;
 	heightChargeSeg = 10;
 	
-	colorChargeGreen = set_Color16(0, 48, 5);   
-	colorChargeBrGreen = set_Color16(19, 61, 0);
+	colorChargeGreen = ST7735S_SetColor16(0, 48, 5);   
+	colorChargeBrGreen = ST7735S_SetColor16(19, 61, 0);
 	colorChargeYellow = ST7735_COLOR_YELLOW;	    
 	colorChargeRed = ST7735_COLOR_RED;	    	
 	
 	if( (percent <= 100) && (percent > 75) )
 	{
 		for(uint8_t i = 0; i < 4; i++)
-				plot_FillRectangle(x0 + 2 + i + i*widthChargeSeg, y0 + 2, widthChargeSeg, heightChargeSeg, colorChargeGreen);
+				ST7735S_DrawFillRectangle(x0 + 2 + i + i*widthChargeSeg, y0 + 2, widthChargeSeg, heightChargeSeg, colorChargeGreen);
 	}
 	
 	if( (percent <= 75) && (percent > 50) )
 	{
 		for(uint8_t i = 0; i < 3; i++)
-				plot_FillRectangle(x0 + 2 + i + i*widthChargeSeg, y0 + 2, widthChargeSeg, heightChargeSeg, colorChargeBrGreen);
+				ST7735S_DrawFillRectangle(x0 + 2 + i + i*widthChargeSeg, y0 + 2, widthChargeSeg, heightChargeSeg, colorChargeBrGreen);
 	}
 	
 	if( (percent <= 50) && (percent > 25) )
 	{
-		plot_FillRectangle(x0 + 2, y0 + 2, widthChargeSeg, heightChargeSeg, colorChargeYellow);
-		plot_FillRectangle(x0 + 3 + widthChargeSeg, y0 + 2, widthChargeSeg, heightChargeSeg, colorChargeYellow);
+		ST7735S_DrawFillRectangle(x0 + 2, y0 + 2, widthChargeSeg, heightChargeSeg, colorChargeYellow);
+		ST7735S_DrawFillRectangle(x0 + 3 + widthChargeSeg, y0 + 2, widthChargeSeg, heightChargeSeg, colorChargeYellow);
 	}
 	
 	if( (percent <= 25) && (percent > 0) )
-				plot_FillRectangle(x0 + 2, y0 + 2, widthChargeSeg, heightChargeSeg, colorChargeRed);
+				ST7735S_DrawFillRectangle(x0 + 2, y0 + 2, widthChargeSeg, heightChargeSeg, colorChargeRed);
 	
 	
 	//Отрисовка корпуса батареи
@@ -274,7 +274,7 @@ void fsgrnyllwrdbattery(t_batt batt)
 	heightFrame = heightCharge + 2;
 	colorFrame = 0xFFFF;
 	
-	plot_Rectangle(x0, y0, widthFrame, heightFrame, colorFrame);
+	ST7735S_DrawRectangle(x0, y0, widthFrame, heightFrame, colorFrame);
 	
 	
 	//Отрисовка контанкта батареи
@@ -284,7 +284,7 @@ void fsgrnyllwrdbattery(t_batt batt)
 	widthContact = 2;
 	heightContact = heightCharge - 4;
 	
-	plot_FillRectangle(x0 + widthFrame, y0 + 3, widthContact, heightContact, colorFrame);
+	ST7735S_DrawFillRectangle(x0 + widthFrame, y0 + 3, widthContact, heightContact, colorFrame);
 }
 //----------------------------------------------------------------------------
 
@@ -319,11 +319,11 @@ void plot_batt(t_batt batt)
 //----------------------------------------------------------------------------
 void print_prcntbatt(t_batt batt, int16_t x0, int16_t y0, uint16_t color)
 {
-	set_cursor(x0, y0, 0);
+	ST7735S_SetCursor(x0, y0, 0);
 	
 	uint8_t prcnt = batt.prcnt;
 	
-	print_IntNum(prcnt, ST7735_COLOR_WHITE, 1, 1);
+	ST7735S_PrintIntNum(prcnt, ST7735_COLOR_WHITE, 1, 1);
 	
 	// Подсчет количества цифр в числе prcnt
 	uint8_t cnt = 0; 
@@ -344,7 +344,7 @@ void print_prcntbatt(t_batt batt, int16_t x0, int16_t y0, uint16_t color)
 						break;
 	}
 	
-	set_cursor(x0 + indent, y0, 0);
-	print_Char('%', color, 1, 1);
+	ST7735S_SetCursor(x0 + indent, y0, 0);
+	ST7735S_PrintChar('%', color, 1, 1);
 }
 //----------------------------------------------------------------------------
