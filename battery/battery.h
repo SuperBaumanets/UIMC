@@ -17,10 +17,10 @@ typedef struct c_batt
 	uint8_t prcnt;
 	
 	void (*design)(struct c_batt);
-	void (*init_batt)(struct c_batt, int16_t, int16_t);
+	//void (*batt_Init)(struct c_batt, int16_t, int16_t);
 	
 	//In order you can not call the drawing of battery icons through the battery icon decoration function
-	uint8_t crutch;
+	uint8_t flagFrstPlotBatt;
 }t_batt;
 //=============================================================================================================================
 
@@ -38,12 +38,19 @@ typedef struct c_batt
 //@param (*ptrdesign)(t_batt)				battery icon design function pointer
 //@param x0													coordinate x0 of start point
 //@param y0													coordinate y0 of start point
-void init_batt(t_batt *ptrbatt, void (*ptrdesign)(t_batt), int16_t x0, int16_t y0);
+void batt_Init(t_batt *ptrbatt, void (*ptrdesign)(t_batt), int16_t x0, int16_t y0);
 
 
 //@brief 							Draw the battery icon. 
 //@param batt					Battery object
-void plot_batt(t_batt batt);
+void batt_Plot(t_batt batt);
+
+
+//@brief														Proscessing voltage at the source in [V] and 
+//																  the battery`s storage percent.
+//@param *ptrbatt										pointer to battery object
+void batt_ChrctrstcProscessing(t_batt *ptrbatt);
+	
 
 //@brief 							Print the battery percent. 
 //										Default the width and height size of the "pixel" is 1.
@@ -51,7 +58,7 @@ void plot_batt(t_batt batt);
 //@param color				Ñolor of the symbol
 //@param x0						coordinate x 
 //@param y0						coordinate y
-void print_prcntbatt(t_batt batt, int16_t x0, int16_t y0, uint16_t color);
+void batt_PrintPercent(t_batt batt, int16_t x0, int16_t y0, uint16_t color);
 
 
 //Battery icon design function

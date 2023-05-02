@@ -1,6 +1,7 @@
 // Includes
 //=============================================================================================================================
 #include "battery.h"
+#include "devicebattery.h"
 #include "st7735.h"
 //=============================================================================================================================
 
@@ -18,8 +19,8 @@ extern screen_t scr1;
 
 
 //----------------------------------------------------------------------------
-//@brief		Функция возвращает напряжение на источнике в [В]
-float getBattVoltage()
+//@brief		return the voltage at the source in [V]
+float batt_GetVoltage()
 {
 	float outV;			//[В] - Выходное напряжение
 	float adcN;			//Отсчет АЦП
@@ -68,18 +69,19 @@ VoutK = Vin * k, k < 1
 //----------------------------------------------------------------------------
 //@brief							Функция возвращает % заряда на батареи
 //@param voltage			Напряжение снимаемое с источника					
-uint8_t getBattPercent(float voltage)
+uint8_t batt_GetPercent(float voltage)
 {
 	uint8_t percent;
-	const float volscr_max = 1.8;
-	const float volsrc_min = 0.8;
 	
-	if(volscr_max < voltage)
-		return volscr_max;	
-	if(volsrc_min > voltage)
-		return volsrc_min;
+	const float vltgMax = VOLTAGE_MAX;
+	const float vltgMin = VOLTAGE_MIN;
 	
-	percent = ((voltage - volsrc_min) * 100) / (volscr_max - volsrc_min);
+	if(vltgMax < voltage)
+		voltage = vltgMax;	
+	if(vltgMin > voltage)
+		return voltage; // to correct
+	
+	percent = ((voltage - vltgMin) * 100) / (vltgMax - vltgMin);
 	
 	if(percent < 0)
 		return 0;
@@ -97,7 +99,7 @@ uint8_t getBattPercent(float voltage)
 //----------------------------------------------------------------------------
 void greenbattery(t_batt batt)
 {	
-	if(batt.crutch != 1)
+	if(batt.flagFrstPlotBatt != 1)
 		return;
 	
 	int16_t x0 = batt.x; 
@@ -150,7 +152,7 @@ void greenbattery(t_batt batt)
 //----------------------------------------------------------------------------
 void gradientbattery(t_batt batt)
 {	
-	if(batt.crutch != 1)
+	if(batt.flagFrstPlotBatt != 1)
 		return;
 	
 	int16_t x0 = batt.x; 
@@ -215,7 +217,7 @@ void gradientbattery(t_batt batt)
 //----------------------------------------------------------------------------
 void fsgrnyllwrdbattery(t_batt batt)
 {	
-	if(batt.crutch != 1)
+	if(batt.flagFrstPlotBatt != 1)
 		return;
 	
 	int16_t x0 = batt.x; 
@@ -288,16 +290,17 @@ void fsgrnyllwrdbattery(t_batt batt)
 }
 //----------------------------------------------------------------------------
 
+
 //================================================================================================================================================
 
 //----------------------------------------------------------------------------
-void init_batt(t_batt *ptrbatt, void (*ptrdesign)(t_batt), int16_t x0, int16_t y0)
+void batt_Init(t_batt *ptrbatt, void (*ptrdesign)(t_batt), int16_t x0, int16_t y0)
 {
 	//Снимаемое с источника напряжение
-	ptrbatt -> vout = getBattVoltage();
+	ptrbatt -> vout = 0;
 	
 	//Процент заряда батареи
-	ptrbatt -> prcnt  = getBattPercent(ptrbatt -> vout);
+	ptrbatt -> prcnt  = 0;
 	
 	ptrbatt -> x = x0;
 	ptrbatt -> y = y0;
@@ -308,16 +311,27 @@ void init_batt(t_batt *ptrbatt, void (*ptrdesign)(t_batt), int16_t x0, int16_t y
 
 
 //----------------------------------------------------------------------------
-void plot_batt(t_batt batt)
+void batt_ChrctrstcProscessing(t_batt *ptrbatt)
 {
-	batt.crutch = 1;
+	ptrbatt -> vout = batt_GetVoltage();
+	ST7735S_SetCursor(50, 50, 0);
+	ST7735S_PrintFloatNum(ptrbatt -> vout, ST7735_COLOR_WHITE, 1, 1);
+	ptrbatt -> prcnt = batt_GetPercent(ptrbatt -> vout);
+}
+	
+//----------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------
+void batt_Plot(t_batt batt)
+{
+	batt.flagFrstPlotBatt = 1;
 	batt.design(batt);
 }
 //----------------------------------------------------------------------------
 
 
 //----------------------------------------------------------------------------
-void print_prcntbatt(t_batt batt, int16_t x0, int16_t y0, uint16_t color)
+void batt_PrintPercent(t_batt batt, int16_t x0, int16_t y0, uint16_t color)
 {
 	ST7735S_SetCursor(x0, y0, 0);
 	
@@ -327,7 +341,7 @@ void print_prcntbatt(t_batt batt, int16_t x0, int16_t y0, uint16_t color)
 	
 	// Подсчет количества цифр в числе prcnt
 	uint8_t cnt = 0; 
-  while (prcnt != 0)
+  while(prcnt != 0)
   {
       prcnt = prcnt / 10;
       ++cnt;
@@ -337,14 +351,17 @@ void print_prcntbatt(t_batt batt, int16_t x0, int16_t y0, uint16_t color)
 	switch (cnt)
 	{
 		case 1: indent = 6;
+						ST7735S_SetCursor(x0 + indent, y0, 0);
+						ST7735S_PrintChar('%', color, 1, 1);
 						break;
 		case 2: indent = 12;
+						ST7735S_SetCursor(x0 + indent, y0, 0);
+						ST7735S_PrintChar('%', color, 1, 1);
 						break;
 		case 3: indent = 18;
+						ST7735S_SetCursor(x0 + indent, y0, 0);
+						ST7735S_PrintChar('%', color, 1, 1);
 						break;
 	}
-	
-	ST7735S_SetCursor(x0 + indent, y0, 0);
-	ST7735S_PrintChar('%', color, 1, 1);
 }
 //----------------------------------------------------------------------------
